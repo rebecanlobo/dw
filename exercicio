@@ -1,0 +1,54 @@
+CREATE TABLE dw.dim_vendedor as
+SELECT cdvdd AS codigovendedor
+, nmvdd AS nomevendedor
+, case when sxvdd = 1 then 'M'
+ELSE 'F' END as sexovendedor
+, perccomissao as percentualcomissao
+, matfunc as matriculafuncionario
+FROM tbvdd
+WHERE 1=1;
+
+--DIMENSÃO CLIENTE: dim_cliente
+CREATE TABLE dw.dim_cliente as
+SELECT DISTINCT cdcli AS codigodocliente
+, nmcli AS nomedocliente
+, agecli AS idadedocliente
+, clacli AS classedocliente
+, sxcli as sexocliente
+, cidcli as cidadecliente
+, estcli as estadocliente
+, paicli as paiscliente
+from tbven
+order by 1;
+
+-- DIMENSÃO CANAL: dim_canal
+CREATE TABLE dw.dim_canal as
+SELECT DISTINCT 
+CASE WHEN canal = 'Loja Própria' THEN 1
+ELSE 2 END AS codigocanal
+, canal as canalvenda
+from tbven
+where 1 = 1;
+
+-- DIMENSÃO STATUS: dim_status
+CREATE TABLE dw.dim_status as
+SELECT DISTINCT
+stven as StatusVenda
+, CASE WHEN stven = 1 THEN 'concluída'
+       WHEN stven = 2 THEN 'em aberto'
+	   WHEN stven = 3 THEN 'cancelada'
+	   ELSE 'desconhecido' END as CodigoStatusVenda
+	   FROM tbven
+	   WHERE 1 = 1
+	   ORDER BY 1;
+
+-- DIMENSÃO DATA: dim_data
+CREATE TABLE dw.dim_data as
+SELECT DISTINCT
+dtven as Data
+, EXTRACT (DAY FROM dtven) AS dia
+, EXTRACT (WEEK FROM dtven) AS semana
+, EXTRACT (MONTH from dtven) as mês
+from tbven
+where 1 = 1
+order by 1;
